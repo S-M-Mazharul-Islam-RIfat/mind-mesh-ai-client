@@ -2,8 +2,8 @@ import { Form, Input, Button, Card, Typography, Space } from 'antd';
 import { User, Mail, Lock } from 'lucide-react';
 import { useSignupMutation } from '../redux/features/auth/authApi';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
-const { Title, Text, Link } = Typography;
+import { Link, useNavigate } from 'react-router-dom';
+const { Title, Text } = Typography;
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 mx-auto">
+    <div className="min-h-screen flex items-center justify-center bg-background mx-auto">
       <Card className="w-full max-w-md shadow-lg">
         <Space direction="vertical" size="large" className="w-full">
           <div className="text-center">
@@ -130,7 +130,7 @@ const Signup = () => {
           <div className="text-center">
             <Space>
               <Text>Already have an account?</Text>
-              <Link>Sign in</Link>
+              <Link to="/login">Login</Link>
             </Space>
           </div>
         </Space>

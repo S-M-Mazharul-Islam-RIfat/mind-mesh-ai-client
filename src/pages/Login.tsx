@@ -5,8 +5,8 @@ import { toast } from 'sonner';
 import { verifyToken } from '../utils/verifyToken';
 import { useAppDispatch } from '../redux/hooks';
 import { setUser, type TUser } from '../redux/features/auth/authSlice';
-import { useNavigate } from 'react-router-dom';
-const { Title, Text, Link } = Typography;
+import { Link, useNavigate } from 'react-router-dom';
+const { Title, Text } = Typography;
 
 const Login = () => {
    const navigate = useNavigate();
@@ -22,6 +22,7 @@ const Login = () => {
          }
 
          const res = await login(userInfo).unwrap();
+         console.log(res);
          const user = verifyToken(res.data.accessToken) as TUser;
          dispatch(setUser({ user: user, token: res.data.accessToken }));
          navigate(`/`);
@@ -86,7 +87,7 @@ const Login = () => {
                <div className="text-center">
                   <Space className="mt-2">
                      <Text>Don't have an account?</Text>
-                     <Link>Sign up</Link>
+                     <Link to="/signup">Sign up</Link>
                   </Space>
                </div>
             </Space>

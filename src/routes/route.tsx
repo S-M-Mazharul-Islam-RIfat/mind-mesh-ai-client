@@ -1,8 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import Main from "../layout/Main";
-import Home from "../pages/Home/Home";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
+import CreateThread from "../pages/Thread/CreateThread";
+import ThreadList from "../pages/Thread/ThreadList";
+import ThreadDetail from "../pages/Thread/ThreadDetail";
+import Profile from "../pages/Profile/Profile";
 
 const router = createBrowserRouter([
    {
@@ -11,7 +14,19 @@ const router = createBrowserRouter([
       children: [
          {
             path: '/',
-            element: <Home></Home>
+            element: <ThreadList></ThreadList>
+         },
+         {
+            path: '/create-thread',
+            element: <CreateThread></CreateThread>
+         },
+         {
+            path: '/thread/:threadId',
+            element: <ThreadDetail></ThreadDetail>
+         },
+         {
+            path: 'profile',
+            element: <Profile></Profile>
          },
          {
             path: 'login',
