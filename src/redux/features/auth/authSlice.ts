@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 
 export type TUser = {
+   id: string
    fullName: string
    userName: string
    email: string

@@ -1,16 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Input, Card, Tag, Space, Typography, Button, Empty } from 'antd';
-import { Search, MessageSquare, Eye } from 'lucide-react';
+import { Search, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useGetAllThreadQuery } from '../../redux/features/thread/threadApi';
 import { formatDistanceToNow } from 'date-fns';
+import { toast } from 'sonner';
 
 const { Title, Text } = Typography;
 
 const ThreadList = () => {
    const navigate = useNavigate();
    const [searchQuery, setSearchQuery] = useState('');
-   const { data: threads } = useGetAllThreadQuery("");
+   const { data: threads, refetch } = useGetAllThreadQuery(undefined);
+
+   useEffect(() => {
+      refetch();
+   }, [refetch]);
 
    return (
       <div className="space-y-6">
@@ -34,12 +39,12 @@ const ThreadList = () => {
             allowClear
          />
 
-         <div>
-            {
-               threads?.data.length === 0 ? (
-                  <Empty description="No threads found" />
-               ) :
-                  threads?.data.map(thread => <Card
+         <div className="flex flex-col gap-5">
+            {threads?.data.length === 0 ? (
+               <Empty description="No threads found" />
+            ) : (
+               threads?.data.map(thread => (
+                  <Card
                      key={thread._id}
                      hoverable
                      onClick={() => navigate(`/thread/${thread._id}`)}
@@ -86,8 +91,9 @@ const ThreadList = () => {
                            </Text>
                         </div>
                      </div>
-                  </Card>)
-            }
+                  </Card>
+               ))
+            )}
          </div>
       </div>
    );

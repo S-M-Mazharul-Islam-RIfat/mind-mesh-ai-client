@@ -17,7 +17,7 @@ const threadApi = baseApi.injectEndpoints({
       }),
       getSingleThread: builder.query({
          query: (id) => ({
-            url: `/${id}`,
+            url: `/threads/thread/${id}`,
             method: 'GET',
          })
       })

@@ -1,22 +1,19 @@
 import { Card, Typography, Avatar, Space, Tag, Descriptions, Statistic, Row, Col } from 'antd';
 import { Mail, Calendar, Shield } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { useSelector } from 'react-redux';
 import type { RootState } from '../../redux/store';
+import { useAppSelector } from '../../redux/hooks';
 
 const { Title, Text } = Typography;
 
 const Profile = () => {
-   const currentUser = useSelector((state: RootState) => state.auth.user);
+   const currentUser = useAppSelector((state: RootState) => state.auth.user);
 
    if (!currentUser) {
       return (
          <Card>Please log in to view your profile</Card>
       );
    }
-
-   const userThreads = 0;
-   const userPosts = 0;
 
    return (
       <div className="space-y-6">
@@ -35,7 +32,6 @@ const Profile = () => {
                         <Text type="secondary">{currentUser?.email}</Text>
                      </Space>
                   </div>
-
                   <Space size="middle" wrap>
                      <Tag color="blue" icon={<Shield size={14} />}>
                         {currentUser?.role.toUpperCase()}
@@ -43,7 +39,7 @@ const Profile = () => {
                      <Space size="small">
                         <Calendar size={16} className="text-muted-foreground" />
                         <Text type="secondary">
-                           {/* Joined {formatDistanceToNow(currentUser?.createdAt, { addSuffix: true })} */}
+                           Joined {formatDistanceToNow(currentUser?.memberSince, { addSuffix: true })}
                         </Text>
                      </Space>
                   </Space>
@@ -81,35 +77,6 @@ const Profile = () => {
                </Descriptions.Item>
             </Descriptions>
          </Card>
-
-         {/* <Card title="Recent Activity">
-            <Space direction="vertical" size="middle" className="w-full">
-               {userThreads.length === 0 && userPosts.length === 0 ? (
-                  <Text type="secondary">No activity yet</Text>
-               ) : (
-                  <>
-                     {userThreads.slice(0, 5).map(thread => (
-                        <div key={thread.id} className="border-b border-border pb-3 last:border-0 last:pb-0">
-                           <Text strong>{thread.title}</Text>
-                           <br />
-                           <Text type="secondary" className="text-sm">
-                              Thread • {formatDistanceToNow(thread.createdAt, { addSuffix: true })}
-                           </Text>
-                        </div>
-                     ))}
-                     {userPosts.slice(0, 5).map(post => (
-                        <div key={post.id} className="border-b border-border pb-3 last:border-0 last:pb-0">
-                           <Text>{post.content.substring(0, 100)}...</Text>
-                           <br />
-                           <Text type="secondary" className="text-sm">
-                              Reply • {formatDistanceToNow(post.createdAt, { addSuffix: true })}
-                           </Text>
-                        </div>
-                     ))}
-                  </>
-               )}
-            </Space>
-         </Card> */}
       </div>
    );
 };
