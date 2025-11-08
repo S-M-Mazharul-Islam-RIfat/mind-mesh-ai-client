@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Input, Card, Tag, Space, Typography, Empty, Spin } from 'antd';
-import { Search, Flag, ArrowUpCircle } from 'lucide-react';
+import { Input, Card, Tag, Space, Typography, Empty, Spin, Button } from 'antd';
+import { Search, Flag, ArrowUpCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useGetAllThreadQuery } from '../../redux/features/thread/threadApi';
 import { formatDistanceToNow } from 'date-fns';
@@ -11,15 +11,16 @@ const { Title, Text } = Typography;
 const ThreadList = () => {
    const navigate = useNavigate();
    const [searchQuery, setSearchQuery] = useState('');
+   const [activeSearch, setActiveSearch] = useState('');
    const [threads, setThreads] = useState<any[]>([]);
    const [page, setPage] = useState(1);
    const [showScrollTop, setShowScrollTop] = useState(false);
    const limit = 5;
-   const { data, isFetching } = useGetAllThreadQuery({ page, limit });
-   const totalPages = data?.meta?.totalPages || 1;
-   const totalSegment = Math.ceil(totalPages / limit);
+   const { data, isFetching } = useGetAllThreadQuery({ page, limit, search: activeSearch || '', });
+   const total = data?.meta?.total || 1;
+   const totalPages = data?.meta?.totalPages;
 
-
+   // add chunk by chunk threads data
    useEffect(() => {
       if (data?.data) {
          setThreads((prev) => [...prev, ...data.data]);
@@ -27,11 +28,12 @@ const ThreadList = () => {
    }, [data]);
 
    const fetchMoreData = () => {
-      if (totalPages && page < totalPages) {
+      if (total && page < total) {
          setPage((prev) => prev + 1);
       }
    };
 
+   // smooth scroll to the top
    useEffect(() => {
       const handleScroll = () => {
          if (window.scrollY > 400) setShowScrollTop(true);
@@ -46,41 +48,92 @@ const ThreadList = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
    };
 
+
+   // Handle search click
+   const handleSearch = () => {
+      setPage(1);
+      setThreads([]);
+      setActiveSearch(searchQuery.trim());
+   };
+
+   // Handle search clear (reset)
+   const handleClear = () => {
+      setSearchQuery('');
+      setActiveSearch('');
+      setPage(1);
+      setThreads([]);
+   };
+
    return (
       <div className="space-y-6">
-         <div className="flex items-center gap-1">
-            <Title level={2} className="m-0">
-               Discussion Threads
-            </Title>
-            <Tag color="blue" className="text-base px-3 py-5 rounded-full">
-               {totalPages || 0}
-            </Tag>
+         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-2">
+               <Title
+                  level={2}
+                  className="m-0 text-xl sm:text-2xl text-center sm:text-left"
+               >
+                  Discussion Threads
+               </Title>
+               <Tag
+                  color="blue"
+                  className="text-sm sm:text-base px-3 py-1 sm:py-2 rounded-full"
+               >
+                  {total || 0}
+               </Tag>
+            </div>
+
+            <button
+               onClick={() => navigate('/create-thread')}
+               className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg font-medium 
+         shadow-sm hover:bg-blue-700 transition-all duration-300 text-center cursor-pointer"
+            >
+               + Create Thread
+            </button>
          </div>
 
-         <Input
-            size="large"
-            placeholder="Search threads by title, content, or tags..."
-            prefix={<Search size={18} />}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            allowClear
-         />
+         <div className="flex items-center gap-2">
+            <Input
+               size="large"
+               placeholder="Search threads by title..."
+               prefix={<Search size={20} />}
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {!activeSearch && <Button
+               type="primary"
+               icon={<Search size={18} />}
+               onClick={handleSearch}
+               disabled={!searchQuery.trim()}
+               size='large'
+            >
+               Search
+            </Button>}
+            {activeSearch && (
+               <Button
+                  icon={<XCircle size={18} />}
+                  onClick={handleClear}
+                  size='large'
+               >
+                  Clear
+               </Button>
+            )}
+         </div>
 
 
          <InfiniteScroll
             dataLength={threads.length}
             next={fetchMoreData}
-            hasMore={page < totalSegment}
+            hasMore={page < totalPages}
             scrollThreshold={0.9}
             loader={
-               (page < totalPages) && (
+               (page < total) && (
                   <div className="flex justify-center py-4">
                      <Spin size="default" />
                   </div>
                )
             }
             endMessage={
-               (page === totalSegment) && (
+               (page === totalPages) && (
                   <div className="flex justify-center items-center gap-2 py-4">
                      <Flag size={20} className="text-blue-500" />
                      <Text type="secondary">You have reached the end.</Text>

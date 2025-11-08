@@ -7,13 +7,15 @@ const threadApi = baseApi.injectEndpoints({
             url: '/threads/create-thread',
             method: 'POST',
             body: threadInfo
-         })
+         }),
+         invalidatesTags: ["Threads"]
       }),
       getAllThread: builder.query({
-         query: ({ page, limit }) => ({
-            url: `/threads?page=${page}&limit=${limit}`,
+         query: ({ page, limit, search }) => ({
+            url: `/threads?page=${page}&limit=${limit}&search=${search}`,
             method: 'GET',
-         })
+         }),
+         providesTags: ["Threads"],
       }),
       getSingleThread: builder.query({
          query: (id) => ({
