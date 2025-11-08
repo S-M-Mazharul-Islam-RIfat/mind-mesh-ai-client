@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+@keyframes float {
+   0%, 100% {
+      transform: translateY(0);
+   }
+
+   50% {
+      transform: translateY(-5px);
+   }
+}
+
+@keyframes blink-smooth {
+   0%, 100% {
+      opacity: 1;
+   }
+
+   50% {
+      opacity: 0.7;
+   }
+}
+
+.animate-blink-smooth {
+   animation: blink-smooth 1.8s ease-in-out infinite;
+}

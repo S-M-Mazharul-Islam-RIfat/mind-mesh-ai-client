@@ -28,7 +28,7 @@ const CommentCard = ({ comment, onReply, depth = 0 }: any) => {
    return (
       <div className={`${depth > 0 ? 'ml-8 mt-4' : 'mb-4'} animate-fade-in`}>
          <Card
-            className="relative transition-all duration-300 hover:shadow-lg hover-scale"
+            className="p-0 relative transition-all duration-300 hover:shadow-lg hover-scale"
             style={{
                borderLeft: depth > 0 ? '3px solid hsl(var(--primary))' : undefined,
                backgroundColor: depth > 0 ? '#B5DFC5' : undefined,

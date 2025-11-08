@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Typography, Button, Space, Tag, Avatar, Input, Empty, Alert } from 'antd';
 import { ArrowLeft, Send, ThumbsUp } from 'lucide-react';
@@ -9,6 +9,7 @@ import { useAppSelector } from '../../redux/hooks';
 import type { RootState } from '../../redux/store';
 import { useCreateCommentMutation, useGetAllCommentsByThreadIdQuery } from '../../redux/features/comment/commentApi';
 import CommentCard from '../Comment/CommentCard';
+import { socket } from '../../utils/socket';
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
@@ -16,17 +17,40 @@ const ThreadDetail = () => {
   const currentUser = useAppSelector((state: RootState) => state.auth.user);
   const { threadId } = useParams();
   const navigate = useNavigate();
-
   const { data: threadData } = useGetSingleThreadQuery(`${threadId}`);
   const thread = threadData?.data;
   const { data: commentsData, refetch } = useGetAllCommentsByThreadIdQuery(`${threadId}`);
   const comments = commentsData?.data;
-
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyingToAuthor, setReplyingToAuthor] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState('');
-
   const [createComment] = useCreateCommentMutation();
+  const replyBoxRef = useRef<HTMLDivElement | null>(null);
+
+
+  useEffect(() => {
+    if (!threadId) {
+      return;
+    }
+    socket.emit("join_thread", threadId);
+    const handleNewComment = (comment: any) => {
+      // Clear previous timer
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      // Wait 1s before refetching
+      debounceRef.current = setTimeout(() => {
+        refetch();
+      }, 1000);
+    };
+
+    socket.on("new_comment_created", handleNewComment);
+
+    return () => {
+      socket.off("new_comment_created", handleNewComment);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [threadId, refetch]);
+
 
   const handleSubmitReply = async () => {
     if (!replyContent.trim() || !threadId) {
@@ -40,6 +64,7 @@ const ThreadDetail = () => {
         parentId: replyingTo,
         commentBody: replyContent,
         commentBy: {
+          id: currentUser?.id,
           userName: currentUser?.userName,
           email: currentUser?.email
         }
@@ -48,7 +73,6 @@ const ThreadDetail = () => {
       <Toaster richColors position="top-center" />
 
       const res = await createComment(commentInfo).unwrap();
-      console.log(res);
       refetch();
       setReplyingTo(null);
       setReplyingToAuthor(null);
@@ -59,13 +83,14 @@ const ThreadDetail = () => {
     }
   }
 
-  // const threadCreatedAt = String(thread?.createdAt).substring(0, 10);
 
   const handleReply = (commentId: string, authorUserName: string) => {
     setReplyingTo(commentId);
     setReplyingToAuthor(authorUserName);
-    console.log(replyingTo);
-    console.log(authorUserName);
+    // Smooth scroll to reply box
+    setTimeout(() => {
+      replyBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   return (
@@ -111,26 +136,29 @@ const ThreadDetail = () => {
         </Space>
       </Card>
 
-      <Title level={4}>{commentsData?.commentsCount} Replies</Title>
+      <Title className='!font-bold py-3' level={4}>{commentsData?.meta?.commentsCount} Replies</Title>
 
-      {comments?.length === 0 ? (
-        <Empty description="No replies yet. Be the first to reply!" />
-      ) : (
-        <div className="space-y-4">
-          {comments?.map((comment) => (
-            <CommentCard
-              key={comment._id}
-              comment={comment}
-              onReply={handleReply}
-            />
-          ))}
-        </div>
-      )}
+      <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+        {comments?.length === 0 ? (
+          <Empty description="No replies yet. Be the first to reply!" />
+        ) : (
+          <div className="space-y-4 pb-2">
+            {comments?.map((comment) => (
+              <CommentCard
+                key={comment._id}
+                comment={comment}
+                onReply={handleReply}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {
         currentUser && (
           <Card
             id="reply-box"
+            ref={replyBoxRef}
             title={replyingTo ? "Post a Nested Reply" : "Add a Reply"}
           >
             <Space direction="vertical" size="middle" className="w-full">

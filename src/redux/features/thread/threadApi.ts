@@ -10,8 +10,8 @@ const threadApi = baseApi.injectEndpoints({
          })
       }),
       getAllThread: builder.query({
-         query: () => ({
-            url: '/threads',
+         query: ({ page, limit }) => ({
+            url: `/threads?page=${page}&limit=${limit}`,
             method: 'GET',
          })
       }),

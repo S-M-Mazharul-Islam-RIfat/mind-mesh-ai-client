@@ -34,8 +34,9 @@ const CreateThread = () => {
       try {
          const threadInfo = {
             author: {
-               userName: user.userName,
-               email: user.email,
+               id: user?.id,
+               userName: user?.userName,
+               email: user?.email,
             },
             title: values.title,
             threadBody: values.content,
