@@ -17,7 +17,7 @@ const ThreadList = () => {
    const [showScrollTop, setShowScrollTop] = useState(false);
    const limit = 5;
    const { data, isFetching } = useGetAllThreadQuery({ page, limit, search: activeSearch || '', });
-   const total = data?.meta?.total || 1;
+   const total = data?.meta?.total || 0;
    const totalPages = data?.meta?.totalPages;
 
    // add chunk by chunk threads data
@@ -179,7 +179,7 @@ const ThreadList = () => {
                                  by {thread.author.userName}
                               </Text>
                               <Text type="secondary">
-                                 {formatDistanceToNow(thread.updatedAt, { addSuffix: true })}
+                                 {formatDistanceToNow(thread?.createdAt, { addSuffix: true })}
                               </Text>
                            </div>
                         </div>

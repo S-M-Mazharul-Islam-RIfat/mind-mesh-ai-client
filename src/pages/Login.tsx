@@ -5,11 +5,13 @@ import { toast } from 'sonner';
 import { verifyToken } from '../utils/verifyToken';
 import { useAppDispatch } from '../redux/hooks';
 import { setUser, type TUser } from '../redux/features/auth/authSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 const { Title, Text } = Typography;
 
 const Login = () => {
    const navigate = useNavigate();
+   const location = useLocation();
+   const from = location.state?.from?.pathname || '/';
    const [login] = useLoginMutation();
    const dispatch = useAppDispatch();
 
@@ -25,7 +27,7 @@ const Login = () => {
          console.log(res);
          const user = verifyToken(res.data.accessToken) as TUser;
          dispatch(setUser({ user: user, token: res.data.accessToken }));
-         navigate(`/`);
+         navigate(from, { replace: true });
          toast.success('Logged In Successfully', { id: toastId });
       }
       catch {

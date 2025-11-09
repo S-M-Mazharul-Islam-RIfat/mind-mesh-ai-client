@@ -20,8 +20,7 @@ import type { RootState } from '../../redux/store';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { toast } from 'sonner';
 import { useChangePasswordMutation, useChangeUserInfoMutation } from '../../redux/features/auth/authApi';
-import { verifyToken } from '../../utils/verifyToken';
-import { logout, setUser, type TUser } from '../../redux/features/auth/authSlice';
+import { logout } from '../../redux/features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
@@ -63,8 +62,7 @@ const Profile = () => {
          }
          console.log(userUpdatedInfo);
          const res = await changeUserInfo(userUpdatedInfo).unwrap();
-         const user = verifyToken(res.data.accessToken) as TUser;
-         dispatch(setUser({ user: user, token: res.data.accessToken }));
+
          setIsInfoModalOpen(false);
          toast.success('User info changed successfully');
       } catch (err) {

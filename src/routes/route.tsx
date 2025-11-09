@@ -7,6 +7,7 @@ import ThreadList from "../pages/Thread/ThreadList";
 import ThreadDetail from "../pages/Thread/ThreadDetail";
 import Profile from "../pages/Profile/Profile";
 import Notification from "../pages/Notification/Notification";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
    {
@@ -19,19 +20,19 @@ const router = createBrowserRouter([
          },
          {
             path: '/create-thread',
-            element: <CreateThread></CreateThread>
+            element: <PrivateRoute role="user"><CreateThread></CreateThread></PrivateRoute>
          },
          {
             path: '/thread/:threadId',
-            element: <ThreadDetail></ThreadDetail>
+            element: <PrivateRoute role="user"><ThreadDetail></ThreadDetail></PrivateRoute>
          },
          {
             path: '/profile',
-            element: <Profile></Profile>
+            element: <PrivateRoute role="user"><Profile></Profile></PrivateRoute>
          },
          {
             path: '/notifications',
-            element: <Notification></Notification>
+            element: <PrivateRoute role="user"><Notification></Notification></PrivateRoute>
          },
          {
             path: '/login',

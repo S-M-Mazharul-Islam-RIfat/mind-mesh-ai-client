@@ -135,7 +135,7 @@ const ThreadDetail = () => {
                 <Text strong>{thread?.author.userName}</Text>
                 <Text type="secondary">•</Text>
                 <Text type="secondary">
-                  {/* {formatDistanceToNow(threadCreatedAt, { addSuffix: true })} */}
+                  {/* {formatDistanceToNow(new Date(thread?.createdAt || ""), { addSuffix: true })} */}
                 </Text>
               </div>
               <Paragraph>{thread?.threadBody}</Paragraph>

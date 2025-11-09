@@ -1,5 +1,5 @@
-import { memo, useEffect, useState } from 'react';
-import { Layout, Badge, Avatar, Button } from 'antd';
+import { memo, useEffect } from 'react';
+import { Layout, Badge, Avatar, Button, Tooltip } from 'antd';
 import { Bell, User, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -7,13 +7,14 @@ import type { RootState } from '../redux/store';
 import { logout } from '../redux/features/auth/authSlice';
 import { socket } from '../utils/socket';
 import { toast } from 'sonner';
+import { clearNotificationCount, incrementNotificationCount } from '../redux/features/notification/notificationSlice';
 const { Header } = Layout;
 
 const NavBar = () => {
    const navigate = useNavigate();
    const dispatch = useAppDispatch();
    const currentUser = useAppSelector((state: RootState) => state.auth.user);
-   const [notificationCount, setNotificationCount] = useState(0);
+   const currentNotificationCount = useAppSelector((state: RootState) => state.notifications.count);
 
    useEffect(() => {
       if (currentUser?.id) {
@@ -28,7 +29,7 @@ const NavBar = () => {
       const handleNotification = (data: any) => {
          console.log("Notification received:", data);
          toast.info(data.message, { position: "top-right", duration: 3000 });
-         setNotificationCount((prev) => prev + 1);
+         dispatch(incrementNotificationCount());
       };
 
       // add listener only once when the component mounts
@@ -38,7 +39,7 @@ const NavBar = () => {
          // remove exactly that listener
          socket.off("notification", handleNotification);
       };
-   }, []);
+   }, [dispatch]);
 
 
    const handleLogout = () => {
@@ -47,7 +48,7 @@ const NavBar = () => {
    };
 
    const handleNotificationClick = () => {
-      setNotificationCount(0);
+      dispatch(clearNotificationCount());
       navigate('/notifications');
    };
 
@@ -57,47 +58,61 @@ const NavBar = () => {
             <h1 className="text-xl font-bold text-white m-0">
                <Link to="/">Mind Mesh AI</Link>
             </h1>
-            <Badge
-               count={notificationCount}
-               color="red"
-               offset={[0, 2]}
-               overflowCount={99}
-            >
-               <Button
-                  type="text"
-                  icon={
-                     <Bell
-                        size={20}
-                        className="transition-colors"
-                        style={{ color: "white" }}
-                     />
-                  }
-                  onClick={handleNotificationClick}
-               />
-            </Badge>
+            {
+               currentUser && <Badge
+                  count={currentNotificationCount}
+                  color="red"
+                  offset={[0, 2]}
+                  overflowCount={99}
+               >
+                  <Button
+                     type="text"
+                     icon={
+                        <Bell
+                           size={20}
+                           className="transition-colors"
+                           style={{ color: "white" }}
+                        />
+                     }
+                     onClick={handleNotificationClick}
+                  />
+               </Badge>
+            }
          </div>
          <div className="flex items-center gap-3">
-            <Link
-               to="/profile"
-               className="flex items-center hover:opacity-80 transition"
-            >
-               <Avatar
-                  icon={<User size={20} />}
-                  size="small"
-                  className="border border-gray-500"
-               />
-               <span className="hidden md:inline text-[1rem] text-white font-medium">
-                  {currentUser?.userName}
-               </span>
-            </Link>
-            <Button
-               type="text"
-               danger
-               size="small"
-               icon={<LogOut size={16} />}
-               onClick={handleLogout}
-               className="text-white hover:text-red-400 transition"
-            />
+            {currentUser ? (
+               <>
+                  <Link
+                     to="/profile"
+                     className="flex items-center hover:opacity-80 transition"
+                  >
+                     <Avatar
+                        icon={<User size={20} />}
+                        size="small"
+                        className="border border-gray-500"
+                     />
+                     <span className="hidden md:inline text-[1rem] text-white font-medium">
+                        {currentUser.userName}
+                     </span>
+                  </Link>
+                  <Tooltip title="Logout">
+                     <Button
+                        type="text"
+                        danger
+                        size="small"
+                        icon={<LogOut size={16} />}
+                        onClick={handleLogout}
+                        className="text-white hover:text-red-400 transition"
+                     />
+                  </Tooltip>
+               </>
+            ) : (
+               <Link to="/login">
+                  <Button type="primary" size="large" block>
+                     Login
+                  </Button>
+               </Link>
+            )}
          </div>
       </Header>
    );

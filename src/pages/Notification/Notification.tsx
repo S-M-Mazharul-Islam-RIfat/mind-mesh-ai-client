@@ -7,8 +7,7 @@ import type { RootState } from "../../redux/store";
 const Notification = () => {
    const currentUser = useAppSelector((state: RootState) => state.auth.user);
    const { data, isLoading } = useGetAllNotificationByUserQuery(currentUser?.id);
-   const notifications = data?.data;
-   console.log(notifications);
+   const notifications = data?.data || [];
 
    if (isLoading) {
       return (
@@ -37,7 +36,7 @@ const Notification = () => {
 
          <div className="space-y-4">
             {
-               notifications.map(notification =>
+               notifications?.map(notification =>
                   <Link
                      key={notification._id}
                      to={`/thread/${notification.threadId}`}
