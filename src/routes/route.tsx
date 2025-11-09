@@ -6,6 +6,7 @@ import CreateThread from "../pages/Thread/CreateThread";
 import ThreadList from "../pages/Thread/ThreadList";
 import ThreadDetail from "../pages/Thread/ThreadDetail";
 import Profile from "../pages/Profile/Profile";
+import Notification from "../pages/Notification/Notification";
 
 const router = createBrowserRouter([
    {
@@ -25,15 +26,19 @@ const router = createBrowserRouter([
             element: <ThreadDetail></ThreadDetail>
          },
          {
-            path: 'profile',
+            path: '/profile',
             element: <Profile></Profile>
          },
          {
-            path: 'login',
+            path: '/notifications',
+            element: <Notification></Notification>
+         },
+         {
+            path: '/login',
             element: <Login></Login>
          },
          {
-            path: 'signup',
+            path: '/signup',
             element: <Signup></Signup>
          },
       ]

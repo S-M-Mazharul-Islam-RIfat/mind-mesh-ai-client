@@ -40,7 +40,7 @@ const ThreadDetail = () => {
       // Wait 1s before refetching
       debounceRef.current = setTimeout(() => {
         refetch();
-      }, 1000);
+      }, 500);
     };
 
     socket.on("new_comment_created", handleNewComment);

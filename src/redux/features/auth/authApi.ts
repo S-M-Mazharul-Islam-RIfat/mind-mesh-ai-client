@@ -14,7 +14,8 @@ const authApi = baseApi.injectEndpoints({
             url: '/auth/login',
             method: 'POST',
             body: userInfo
-         })
+         }),
+         invalidatesTags: ["Threads"],
       }),
       changeUserInfo: builder.mutation({
          query: (userInfo) => ({

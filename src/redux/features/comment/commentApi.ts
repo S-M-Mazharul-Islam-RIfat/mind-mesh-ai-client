@@ -8,8 +8,9 @@ const commentApi = baseApi.injectEndpoints({
          query: (commentInfo) => ({
             url: '/comments/create-comment',
             method: 'POST',
-            body: commentInfo
+            body: commentInfo,
          }),
+         invalidatesTags: ["Comments", "Notifications"],
          async onQueryStarted(arg, { queryFulfilled }) {
             try {
                const { data } = await queryFulfilled;
@@ -19,8 +20,6 @@ const commentApi = baseApi.injectEndpoints({
                   threadId: newComment.threadId,
                   comment: newComment,
                });
-
-               toast.success("Comment posted!");
             } catch (err) {
                toast.error("Failed to post comment");
             }
@@ -30,7 +29,8 @@ const commentApi = baseApi.injectEndpoints({
          query: (threadId) => ({
             url: `/comments/${threadId}`,
             method: 'GET',
-         })
+         }),
+         providesTags: ["Comments"],
       }),
    })
 })
