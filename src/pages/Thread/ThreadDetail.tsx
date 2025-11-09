@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Typography, Button, Space, Tag, Avatar, Input, Empty, Alert } from 'antd';
-import { ArrowLeft, Send, ThumbsUp } from 'lucide-react';
+import { Card, Typography, Button, Space, Tag, Avatar, Input, Empty, Alert, Spin } from 'antd';
+import { ArrowLeft, Send, Sparkles, ThumbsUp } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { toast, Toaster } from 'sonner';
 import { useGetSingleThreadQuery } from '../../redux/features/thread/threadApi';
@@ -10,6 +10,7 @@ import type { RootState } from '../../redux/store';
 import { useCreateCommentMutation, useGetAllCommentsByThreadIdQuery } from '../../redux/features/comment/commentApi';
 import CommentCard from '../Comment/CommentCard';
 import { socket } from '../../utils/socket';
+import { useGenerateThreadSummaryMutation } from '../../redux/features/ai/aiApi';
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
@@ -27,6 +28,9 @@ const ThreadDetail = () => {
   const [replyContent, setReplyContent] = useState('');
   const [createComment] = useCreateCommentMutation();
   const replyBoxRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [threadSummary, setThreadSummary] = useState("");
+  const [genearateThreadSummary] = useGenerateThreadSummaryMutation();
 
 
   useEffect(() => {
@@ -93,6 +97,14 @@ const ThreadDetail = () => {
     }, 100);
   };
 
+
+  const handleGenerateSummary = async () => {
+    setLoading(true);
+    const res = await genearateThreadSummary({ threadBody: thread?.threadBody }).unwrap();
+    setLoading(false);
+    setThreadSummary(res.data);
+  };
+
   return (
     <div className="space-y-6">
       <Button
@@ -134,6 +146,37 @@ const ThreadDetail = () => {
             <Text type="secondary">{thread?.commentsCount}</Text>
           </div>
         </Space>
+        <div className="flex flex-col gap-3">
+          <Button
+            type="primary"
+            icon={<Sparkles size={16} />}
+            onClick={handleGenerateSummary}
+            disabled={loading}
+            size="small"
+            className="w-auto sm:w-[40%] md:w-[25%] lg:w-[12%]
+          min-w-fit px-3 py-2
+    bg-purple-600 hover:bg-purple-700 text-white font-medium
+    rounded-md flex items-center justify-center gap-2
+    transition-all duration-200 ease-in-out
+  "
+          >
+            {loading ? "Generating..." : "Generate Thread Summary"}
+          </Button>
+
+          {loading && <Spin tip="Generating summary..." />}
+
+          {threadSummary.length > 0 && !loading && <Card
+            className="mt-2 bg-[#1e293b] border border-gray-600"
+            size="small"
+          >
+            <div className="mb-1">
+              <Text className="text-gray-400 text-sm font-semibold tracking-wide">
+                Summary
+              </Text>
+            </div>
+            <Text className="text-gray-200">{threadSummary}</Text>
+          </Card>}
+        </div>
       </Card>
 
       <Title className='!font-bold py-3' level={4}>{commentsData?.meta?.commentsCount} Replies</Title>

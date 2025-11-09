@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Bell, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useGetAllNotificationByUserQuery } from "../../redux/features/notification/notificationApi";
