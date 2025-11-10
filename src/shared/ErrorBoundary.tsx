@@ -30,7 +30,7 @@ class ErrorBoundary extends React.Component<Props, State> {
                   onClick={() => this.setState({ hasError: false })}
                   className="mt-3 px-4 py-2 bg-blue-600 text-white rounded cursor-pointer"
                >
-                  Try Again
+                  Please try again or navigate to the home page
                </button>
             </div>
          );

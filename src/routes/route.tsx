@@ -9,6 +9,7 @@ import Profile from "../pages/Profile/Profile";
 import Notification from "../pages/Notification/Notification";
 import PrivateRoute from "./PrivateRoute";
 import ErrorBoundary from "../shared/ErrorBoundary";
+import NotFound from "../shared/NotFound";
 
 const router = createBrowserRouter([
    {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
          },
       ]
    },
+   {
+      path: '*',
+      element: <NotFound></NotFound>
+   }
 ]);
 
 export default router;
