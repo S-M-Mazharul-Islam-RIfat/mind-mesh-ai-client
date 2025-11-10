@@ -6,9 +6,6 @@ import {
    Space,
    Tag,
    Descriptions,
-   Statistic,
-   Row,
-   Col,
    Modal,
    Form,
    Input,
@@ -60,11 +57,11 @@ const Profile = () => {
             email: values.email,
             password: values.password
          }
-         console.log(userUpdatedInfo);
          const res = await changeUserInfo(userUpdatedInfo).unwrap();
-
+         dispatch(logout());
+         navigate('/login');
          setIsInfoModalOpen(false);
-         toast.success('User info changed successfully');
+         toast.success('User info changed successfully!! Please login again...');
       } catch (err) {
          toast.error('Password is incorrect');
       }
@@ -84,14 +81,13 @@ const Profile = () => {
             oldPassword: values.oldPassword,
             newPassword: values.newPassword,
          }
-         console.log(userPassword);
          const res = await changePassword(userPassword);
          dispatch(logout());
          navigate('/login');
-         toast.success('Password changed successfully!!Login again');
+         toast.success('Password changed successfully!!Please login again....');
          setIsPasswordModalOpen(false);
       } catch (err) {
-         toast.error('Something wrong!try again...');
+         toast.error('Something wrong!!!try again...');
       }
    };
 
@@ -127,17 +123,6 @@ const Profile = () => {
             </div>
          </Card>
 
-         <Card title="Activity Statistics">
-            <Row gutter={16}>
-               <Col xs={24} sm={8}>
-                  <Statistic title="Threads Created" value={0} valueStyle={{ color: 'hsl(var(--primary))' }} />
-               </Col>
-               <Col xs={24} sm={8}>
-                  <Statistic title="Comments & Replies" value={0} valueStyle={{ color: 'hsl(var(--accent))' }} />
-               </Col>
-            </Row>
-         </Card>
-
          <Card
             title="Account Details"
             extra={
@@ -159,8 +144,6 @@ const Profile = () => {
                </Descriptions.Item>
             </Descriptions>
          </Card>
-
-
          <Modal
             title="Edit General Information"
             open={isInfoModalOpen}
@@ -189,7 +172,6 @@ const Profile = () => {
                >
                   <Input placeholder="Enter full name" />
                </Form.Item>
-
                <Form.Item
                   label="Username"
                   name="userName"
@@ -197,7 +179,6 @@ const Profile = () => {
                >
                   <Input placeholder="Enter username" />
                </Form.Item>
-
                <Form.Item
                   label="Email"
                   name="email"
@@ -205,7 +186,6 @@ const Profile = () => {
                >
                   <Input placeholder="Enter email" />
                </Form.Item>
-
                <Form.Item
                   label="Enter Your Password"
                   name="password"
@@ -213,7 +193,6 @@ const Profile = () => {
                >
                   <Input.Password placeholder="Enter your password" />
                </Form.Item>
-
                <div className="flex justify-end gap-2 mt-4">
                   <Button onClick={() => setIsInfoModalOpen(false)}>Cancel</Button>
                   <Button type="primary" htmlType="submit" disabled={!isInfoChanged}>
@@ -222,8 +201,6 @@ const Profile = () => {
                </div>
             </Form>
          </Modal>
-
-
          <Modal
             title="Change Password"
             open={isPasswordModalOpen}
@@ -238,7 +215,6 @@ const Profile = () => {
                >
                   <Input.Password placeholder="Enter old password" />
                </Form.Item>
-
                <Form.Item
                   label="New Password"
                   name="newPassword"
@@ -260,7 +236,6 @@ const Profile = () => {
                >
                   <Input.Password placeholder="Enter new password" />
                </Form.Item>
-
                <div className="flex justify-end gap-2 mt-4">
                   <Button onClick={() => setIsPasswordModalOpen(false)}>Cancel</Button>
                   <Button type="primary" htmlType="submit">

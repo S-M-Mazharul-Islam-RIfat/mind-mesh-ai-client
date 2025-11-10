@@ -1,6 +1,5 @@
 import { Form, Input, Button, Card, Typography, Select } from 'antd';
 import { ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useCreateThreadMutation } from '../../redux/features/thread/threadApi';
@@ -11,17 +10,16 @@ const { Title } = Typography;
 const { TextArea } = Input;
 
 const CreateThread = () => {
-   const [loading, setLoading] = useState(false);
    const navigate = useNavigate();
    const user = useSelector((state: RootState) => state.auth.user);
-   console.log(user);
 
    const tagOptions = [
       { label: 'General', value: 'general' },
       { label: 'Discussion', value: 'discussion' },
       { label: 'Question', value: 'question' },
-      { label: 'Tutorial', value: 'tutorial' },
       { label: 'Javascript', value: 'javascript' },
+      { label: 'Node js', value: 'Node js' },
+      { label: 'React js', value: 'react js' },
       { label: 'Golang', value: 'golang' },
       { label: 'Backend Development', value: 'backendDevelopment' },
       { label: 'DevOps', value: 'DevOps' },
@@ -42,7 +40,6 @@ const CreateThread = () => {
             threadBody: values.content,
             tags: values.tags
          }
-         console.log(threadInfo);
          const res = await createThread(threadInfo).unwrap();
          navigate(`/`);
          toast.success('Posted', { id: toastId });
@@ -60,10 +57,8 @@ const CreateThread = () => {
          >
             Back to Threads
          </Button>
-
          <Card>
             <Title level={2}>Create New Thread</Title>
-
             <Form
                layout="vertical"
                onFinish={onFinish}
@@ -83,7 +78,6 @@ const CreateThread = () => {
                      showCount
                   />
                </Form.Item>
-
                <Form.Item
                   name="content"
                   label="Content"
@@ -99,7 +93,6 @@ const CreateThread = () => {
                      showCount
                   />
                </Form.Item>
-
                <Form.Item
                   name="tags"
                   label="Tags"
@@ -114,13 +107,11 @@ const CreateThread = () => {
                      maxTagCount="responsive"
                   />
                </Form.Item>
-
                <Form.Item>
                   <Button
                      type="primary"
                      htmlType="submit"
                      size="large"
-                     loading={loading}
                      block
                   >
                      Create Thread

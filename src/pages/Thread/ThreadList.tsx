@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { useGetAllThreadQuery } from '../../redux/features/thread/threadApi';
 import { formatDistanceToNow } from 'date-fns';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
 const { Title, Text } = Typography;
 
 const ThreadList = () => {
@@ -16,9 +15,9 @@ const ThreadList = () => {
    const [page, setPage] = useState(1);
    const [showScrollTop, setShowScrollTop] = useState(false);
    const limit = 5;
-   const { data, isFetching } = useGetAllThreadQuery({ page, limit, search: activeSearch || '', });
+   const { data, isLoading, isFetching } = useGetAllThreadQuery({ page, limit, search: activeSearch || '', });
    const total = data?.meta?.total || 0;
-   const totalPages = data?.meta?.totalPages;
+   const totalPages = data?.meta?.totalPages || 0;
 
    // add chunk by chunk threads data
    useEffect(() => {
@@ -28,7 +27,7 @@ const ThreadList = () => {
    }, [data]);
 
    const fetchMoreData = () => {
-      if (total && page < total) {
+      if (totalPages && page < totalPages) {
          setPage((prev) => prev + 1);
       }
    };
@@ -47,7 +46,6 @@ const ThreadList = () => {
    const scrollToTop = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
    };
-
 
    // Handle search click
    const handleSearch = () => {
@@ -81,7 +79,6 @@ const ThreadList = () => {
                   {total || 0}
                </Tag>
             </div>
-
             <button
                onClick={() => navigate('/create-thread')}
                className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg font-medium 
@@ -90,7 +87,6 @@ const ThreadList = () => {
                + Create Thread
             </button>
          </div>
-
          <div className="flex items-center gap-2">
             <Input
                size="large"
@@ -118,10 +114,8 @@ const ThreadList = () => {
                </Button>
             )}
          </div>
-
-
          <InfiniteScroll
-            dataLength={threads.length}
+            dataLength={threads?.length}
             next={fetchMoreData}
             hasMore={page < totalPages}
             scrollThreshold={0.9}
@@ -173,14 +167,15 @@ const ThreadList = () => {
                                  ))}
                               </Space>
                            </div>
-
                            <div className="flex items-center justify-between text-sm">
                               <Text type="secondary" strong>
                                  by {thread.author.userName}
                               </Text>
-                              <Text type="secondary">
-                                 {formatDistanceToNow(thread?.createdAt, { addSuffix: true })}
-                              </Text>
+                              {
+                                 !isLoading && !isFetching && <Text type="secondary">
+                                    {formatDistanceToNow(thread?.createdAt, { addSuffix: true })}
+                                 </Text>
+                              }
                            </div>
                         </div>
                      </Card>
@@ -188,7 +183,6 @@ const ThreadList = () => {
                )}
             </div>
          </InfiniteScroll>
-
          {showScrollTop && (
             <button
                onClick={scrollToTop}

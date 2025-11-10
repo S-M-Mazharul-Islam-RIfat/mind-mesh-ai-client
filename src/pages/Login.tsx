@@ -22,9 +22,7 @@ const Login = () => {
             email: values.email,
             password: values.password
          }
-
          const res = await login(userInfo).unwrap();
-         console.log(res);
          const user = verifyToken(res.data.accessToken) as TUser;
          dispatch(setUser({ user: user, token: res.data.accessToken }));
          navigate(from, { replace: true });
@@ -43,7 +41,6 @@ const Login = () => {
                   <Title level={2} className="m-0">Welcome Back</Title>
                   <Text type="secondary">Sign in to continue to Mind Mesh AI</Text>
                </div>
-
                <Form
                   name="login"
                   layout="vertical"
@@ -63,7 +60,6 @@ const Login = () => {
                         placeholder="Email"
                      />
                   </Form.Item>
-
                   <Form.Item
                      name="password"
                      rules={[{ required: true, message: 'Please input your password!' }]}
@@ -73,7 +69,6 @@ const Login = () => {
                         placeholder="Password"
                      />
                   </Form.Item>
-
                   <Form.Item>
                      <Button
                         type="primary"
@@ -85,7 +80,6 @@ const Login = () => {
                      </Button>
                   </Form.Item>
                </Form>
-
                <div className="text-center">
                   <Space className="mt-2">
                      <Text>Don't have an account?</Text>

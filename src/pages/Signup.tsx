@@ -34,7 +34,6 @@ const Signup = () => {
           <div className="text-center">
             <Title level={2} className="m-0">Create Account</Title>
           </div>
-
           <Form
             name="signup"
             layout="vertical"
@@ -54,7 +53,6 @@ const Signup = () => {
                 placeholder="Full name"
               />
             </Form.Item>
-
             <Form.Item
               name="userName"
               rules={[
@@ -67,7 +65,6 @@ const Signup = () => {
                 placeholder="Username"
               />
             </Form.Item>
-
             <Form.Item
               name="email"
               rules={[
@@ -80,7 +77,6 @@ const Signup = () => {
                 placeholder="Email"
               />
             </Form.Item>
-
             <Form.Item
               name="password"
               rules={[
@@ -93,7 +89,6 @@ const Signup = () => {
                 placeholder="Password"
               />
             </Form.Item>
-
             <Form.Item
               name="confirm"
               dependencies={['password']}
@@ -114,7 +109,6 @@ const Signup = () => {
                 placeholder="Confirm Password"
               />
             </Form.Item>
-
             <Form.Item>
               <Button
                 type="primary"
@@ -126,7 +120,6 @@ const Signup = () => {
               </Button>
             </Form.Item>
           </Form>
-
           <div className="text-center">
             <Space>
               <Text>Already have an account?</Text>

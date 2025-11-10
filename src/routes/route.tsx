@@ -8,6 +8,7 @@ import ThreadDetail from "../pages/Thread/ThreadDetail";
 import Profile from "../pages/Profile/Profile";
 import Notification from "../pages/Notification/Notification";
 import PrivateRoute from "./PrivateRoute";
+import ErrorBoundary from "../shared/ErrorBoundary";
 
 const router = createBrowserRouter([
    {
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
          },
          {
             path: '/thread/:threadId',
-            element: <PrivateRoute role="user"><ThreadDetail></ThreadDetail></PrivateRoute>
+            element: <PrivateRoute role="user"><ErrorBoundary><ThreadDetail></ThreadDetail></ErrorBoundary></PrivateRoute>
          },
          {
             path: '/profile',

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Typography, Button, Space, Tag, Avatar, Input, Empty, Alert, Spin } from 'antd';
-import { ArrowLeft, Send, Sparkles, ThumbsUp } from 'lucide-react';
+import { ArrowLeft, Send, Sparkles } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { toast, Toaster } from 'sonner';
 import { useGetSingleThreadQuery } from '../../redux/features/thread/threadApi';
@@ -20,7 +20,7 @@ const ThreadDetail = () => {
   const navigate = useNavigate();
   const { data: threadData } = useGetSingleThreadQuery(`${threadId}`);
   const thread = threadData?.data;
-  const { data: commentsData, refetch } = useGetAllCommentsByThreadIdQuery(`${threadId}`);
+  const { data: commentsData, refetch, isLoading, isFetching } = useGetAllCommentsByThreadIdQuery(`${threadId}`);
   const comments = commentsData?.data;
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -87,7 +87,6 @@ const ThreadDetail = () => {
     }
   }
 
-
   const handleReply = (commentId: string, authorUserName: string) => {
     setReplyingTo(commentId);
     setReplyingToAuthor(authorUserName);
@@ -96,7 +95,6 @@ const ThreadDetail = () => {
       replyBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   };
-
 
   const handleGenerateSummary = async () => {
     setLoading(true);
@@ -113,7 +111,6 @@ const ThreadDetail = () => {
       >
         Back to Threads
       </Button>
-
       <Card>
         <Space direction="vertical" size="middle" className="w-full">
           <div>
@@ -134,14 +131,15 @@ const ThreadDetail = () => {
               <div className="flex items-center gap-2 mb-2">
                 <Text strong>{thread?.author.userName}</Text>
                 <Text type="secondary">•</Text>
-                <Text type="secondary">
-                  {/* {formatDistanceToNow(new Date(thread?.createdAt || ""), { addSuffix: true })} */}
-                </Text>
+                {
+                  !isLoading && !isFetching && <Text type="secondary">
+                    {formatDistanceToNow(thread?.createdAt, { addSuffix: true })}
+                  </Text>
+                }
               </div>
               <Paragraph>{thread?.threadBody}</Paragraph>
             </div>
           </div>
-
           <div className="flex gap-6 text-muted-foreground">
             <Text type="secondary">{thread?.commentsCount}</Text>
           </div>
@@ -162,9 +160,7 @@ const ThreadDetail = () => {
           >
             {loading ? "Generating..." : "Generate Thread Summary"}
           </Button>
-
           {loading && <Spin tip="Generating summary..." />}
-
           {threadSummary.length > 0 && !loading && <Card
             className="mt-2 bg-[#1e293b] border border-gray-600"
             size="small"
@@ -178,9 +174,7 @@ const ThreadDetail = () => {
           </Card>}
         </div>
       </Card>
-
       <Title className='!font-bold py-3' level={4}>{commentsData?.meta?.commentsCount} Replies</Title>
-
       <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
         {comments?.length === 0 ? (
           <Empty description="No replies yet. Be the first to reply!" />
@@ -196,7 +190,6 @@ const ThreadDetail = () => {
           </div>
         )}
       </div>
-
       {
         currentUser && (
           <Card
@@ -245,7 +238,6 @@ const ThreadDetail = () => {
         )
       }
     </div >
-
   );
 };
 

@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Layout, Badge, Avatar, Button, Tooltip } from 'antd';
 import { Bell, User, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,10 +24,8 @@ const NavBar = () => {
    }, [currentUser?.id]);
 
    useEffect(() => {
-      console.log("here");
       // use a stable listener function
       const handleNotification = (data: any) => {
-         console.log("Notification received:", data);
          toast.info(data.message, { position: "top-right", duration: 3000 });
          dispatch(incrementNotificationCount());
       };
@@ -40,7 +38,6 @@ const NavBar = () => {
          socket.off("notification", handleNotification);
       };
    }, [dispatch]);
-
 
    const handleLogout = () => {
       dispatch(logout());
@@ -118,4 +115,4 @@ const NavBar = () => {
    );
 };
 
-export default memo(NavBar);
+export default NavBar;
