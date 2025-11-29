@@ -20,6 +20,7 @@ const CreateThread = () => {
       { label: 'Javascript', value: 'javascript' },
       { label: 'Node js', value: 'Node js' },
       { label: 'React js', value: 'react js' },
+      { label: 'Next js', value: 'next js' },
       { label: 'Golang', value: 'golang' },
       { label: 'Backend Development', value: 'backendDevelopment' },
       { label: 'DevOps', value: 'DevOps' },
@@ -31,16 +32,12 @@ const CreateThread = () => {
       const toastId = toast.loading('Posting...');
       try {
          const threadInfo = {
-            author: {
-               id: user?.id,
-               userName: user?.userName,
-               email: user?.email,
-            },
+            author: user?.id,
             title: values.title,
             threadBody: values.content,
             tags: values.tags
          }
-         const res = await createThread(threadInfo).unwrap();
+         await createThread(threadInfo).unwrap();
          navigate(`/`);
          toast.success('Posted', { id: toastId });
       }

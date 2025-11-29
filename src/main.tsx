@@ -15,6 +15,6 @@ createRoot(document.getElementById('root')!).render(
         <RouterProvider router={router} />
       </PersistGate>
     </Provider>
-    <Toaster />
+    <Toaster richColors position="bottom-right" />
   </StrictMode>,
 )

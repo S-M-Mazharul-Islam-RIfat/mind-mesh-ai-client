@@ -41,7 +41,6 @@ const Profile = () => {
    const handleInfoEdit = () => {
       infoForm.setFieldsValue({
          fullName: currentUser.fullName,
-         userName: currentUser.userName,
          email: currentUser.email,
       });
       setIsInfoModalOpen(true);
@@ -51,18 +50,17 @@ const Profile = () => {
       try {
          const values = await infoForm.validateFields();
          const userUpdatedInfo = {
-            id: currentUser.id,
+            _id: currentUser.id,
             fullName: values.fullName,
-            userName: values.userName,
             email: values.email,
             password: values.password
          }
-         const res = await changeUserInfo(userUpdatedInfo).unwrap();
+         await changeUserInfo(userUpdatedInfo).unwrap();
          dispatch(logout());
          navigate('/login');
          setIsInfoModalOpen(false);
-         toast.success('User info changed successfully!! Please login again...');
-      } catch (err) {
+         toast.success('User info changed successfully!!! Please login again...');
+      } catch {
          toast.error('Password is incorrect');
       }
    };
@@ -76,17 +74,17 @@ const Profile = () => {
       try {
          const values = await passwordForm.validateFields();
          const userPassword = {
-            id: currentUser.id,
+            _id: currentUser.id,
             email: currentUser.email,
             oldPassword: values.oldPassword,
             newPassword: values.newPassword,
          }
-         const res = await changePassword(userPassword);
+         await changePassword(userPassword);
          dispatch(logout());
          navigate('/login');
          toast.success('Password changed successfully!!Please login again....');
          setIsPasswordModalOpen(false);
-      } catch (err) {
+      } catch {
          toast.error('Something wrong!!!try again...');
       }
    };
@@ -98,7 +96,7 @@ const Profile = () => {
                <Avatar
                   size={120}
                   src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.userName}`}
-                  className="flex-shrink-0"
+                  className="shrink-0"
                />
                <div className="flex-1 space-y-4">
                   <div>
@@ -122,7 +120,6 @@ const Profile = () => {
                </div>
             </div>
          </Card>
-
          <Card
             title="Account Details"
             extra={
@@ -156,7 +153,6 @@ const Profile = () => {
                onFinish={handleInfoSave}
                initialValues={{
                   fullName: currentUser.fullName,
-                  userName: currentUser.userName,
                   email: currentUser.email,
                }}
                onValuesChange={() => {
@@ -171,13 +167,6 @@ const Profile = () => {
                   rules={[{ required: true, message: 'Please enter your full name' }]}
                >
                   <Input placeholder="Enter full name" />
-               </Form.Item>
-               <Form.Item
-                  label="Username"
-                  name="userName"
-                  rules={[{ required: true, message: 'Please enter your username' }]}
-               >
-                  <Input placeholder="Enter username" />
                </Form.Item>
                <Form.Item
                   label="Email"

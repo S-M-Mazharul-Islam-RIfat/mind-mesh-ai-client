@@ -5,13 +5,15 @@ import { useNavigate } from 'react-router-dom';
 import { useGetAllThreadQuery } from '../../redux/features/thread/threadApi';
 import { formatDistanceToNow } from 'date-fns';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import CommonLoader from '../../shared/CommonLoader';
+import type { TThread } from '../../types/thread.type';
 const { Title, Text } = Typography;
 
 const ThreadList = () => {
    const navigate = useNavigate();
    const [searchQuery, setSearchQuery] = useState('');
    const [activeSearch, setActiveSearch] = useState('');
-   const [threads, setThreads] = useState<any[]>([]);
+   const [threads, setThreads] = useState<TThread[]>([]);
    const [page, setPage] = useState(1);
    const [showScrollTop, setShowScrollTop] = useState(false);
    const limit = 5;
@@ -61,6 +63,10 @@ const ThreadList = () => {
       setPage(1);
       setThreads([]);
    };
+
+   if (isLoading) {
+      return <CommonLoader></CommonLoader>
+   }
 
    return (
       <div className="space-y-6">
@@ -159,11 +165,10 @@ const ThreadList = () => {
                                  </Text>
                               </div>
                            </div>
-
                            <div className="flex items-center justify-between flex-wrap gap-3">
                               <Space size="small" wrap>
-                                 {(thread.tags || []).map((tag: string) => (
-                                    <Tag color="blue" key={tag}>{tag}</Tag>
+                                 {thread.tags.map((tag: string) => (
+                                    <Tag color="blue">{tag}</Tag>
                                  ))}
                               </Space>
                            </div>

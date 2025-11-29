@@ -18,7 +18,7 @@ const Signup = () => {
         email: values.email,
         password: values.password
       }
-      const res = await signup(userInfo).unwrap();
+      await signup(userInfo).unwrap();
       navigate(`/login`);
       toast.success('Sign In Successfully', { id: toastId });
     }

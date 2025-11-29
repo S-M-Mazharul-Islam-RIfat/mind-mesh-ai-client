@@ -10,6 +10,7 @@ import Notification from "../pages/Notification/Notification";
 import PrivateRoute from "./PrivateRoute";
 import ErrorBoundary from "../shared/ErrorBoundary";
 import NotFound from "../shared/NotFound";
+import ProtectedRoute from "./ProtectedRoute";
 
 const router = createBrowserRouter([
    {
@@ -38,11 +39,11 @@ const router = createBrowserRouter([
          },
          {
             path: '/login',
-            element: <Login></Login>
+            element: <ProtectedRoute><Login></Login></ProtectedRoute>
          },
          {
             path: '/signup',
-            element: <Signup></Signup>
+            element: <ProtectedRoute><Signup></Signup></ProtectedRoute>
          },
       ]
    },

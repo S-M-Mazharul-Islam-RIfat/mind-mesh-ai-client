@@ -15,12 +15,11 @@ const commentApi = baseApi.injectEndpoints({
             try {
                const { data } = await queryFulfilled;
                const newComment = data?.data;
-
                socket.emit("new_comment_created", {
                   threadId: newComment.threadId,
                   comment: newComment,
                });
-            } catch (err) {
+            } catch {
                toast.error("Failed to post comment");
             }
          }
@@ -32,7 +31,21 @@ const commentApi = baseApi.injectEndpoints({
          }),
          providesTags: ["Comments"],
       }),
+      addLikeInComment: builder.mutation({
+         query: (info) => ({
+            url: `/comments/${info.commentId}/add-like`,
+            method: 'PATCH',
+            body: { userId: info.userId }
+         }),
+      }),
+      removeLikeFromComment: builder.mutation({
+         query: (info) => ({
+            url: `/comments/${info.commentId}/remove-like`,
+            method: 'PATCH',
+            body: { userId: info.userId }
+         }),
+      })
    })
 })
 
-export const { useCreateCommentMutation, useGetAllCommentsByThreadIdQuery } = commentApi;
+export const { useCreateCommentMutation, useGetAllCommentsByThreadIdQuery, useAddLikeInCommentMutation, useRemoveLikeFromCommentMutation } = commentApi;

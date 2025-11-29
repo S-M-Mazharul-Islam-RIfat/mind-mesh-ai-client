@@ -8,6 +8,7 @@ import { logout } from '../redux/features/auth/authSlice';
 import { socket } from '../utils/socket';
 import { toast } from 'sonner';
 import { clearNotificationCount, incrementNotificationCount } from '../redux/features/notification/notificationSlice';
+import type { TNotification } from '../types/notification.type';
 const { Header } = Layout;
 
 const NavBar = () => {
@@ -25,7 +26,7 @@ const NavBar = () => {
 
    useEffect(() => {
       // use a stable listener function
-      const handleNotification = (data: any) => {
+      const handleNotification = (data: Partial<TNotification>) => {
          toast.info(data.message, { position: "top-right", duration: 3000 });
          dispatch(incrementNotificationCount());
       };

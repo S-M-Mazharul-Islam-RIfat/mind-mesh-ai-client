@@ -5,12 +5,28 @@ import {
    Reply as ReplyIcon,
    CornerDownRight,
    ChevronDown,
+   ThumbsUp,
 } from 'lucide-react';
+import type { TComment } from '../../types/comment.type';
+import { useAppSelector } from '../../redux/hooks';
+import type { RootState } from '../../redux/store';
 const { Text, Paragraph } = Typography;
 
-const CommentCard = ({ comment, onReply, depth = 0 }: any) => {
+const CommentCard = ({ comment, onReply, handleAddLike, handleRemoveLike, depth = 0 }: { comment: TComment, onReply: (commentId: string, authorUserName: string) => void, handleAddLike: (commentId: string) => void, handleRemoveLike: (commentId: string) => void, depth?: number }) => {
+   const currentUser = useAppSelector((state: RootState) => state.auth.user);
    const [showReplies, setShowReplies] = useState(depth === 0);
    const nestedReplies = comment?.replies || [];
+
+   const targetId = currentUser?.id.toString();
+   const liked = comment?.likedBy.some((id: string) => id.toString() === targetId);
+
+   const handleLike = () => {
+      if (liked) {
+         handleRemoveLike(comment?._id)
+      } else {
+         handleAddLike(comment?._id);
+      }
+   };
 
    return (
       <div className={`${depth > 0 ? 'ml-8 mt-4' : 'mb-4'} animate-fade-in`}>
@@ -44,6 +60,15 @@ const CommentCard = ({ comment, onReply, depth = 0 }: any) => {
                   </div>
                   <Paragraph className="mb-3">{comment?.commentBody}</Paragraph>
                   <Space>
+                     <Button
+                        type="text"
+                        size="small"
+                        icon={<ThumbsUp size={14} />}
+                        onClick={handleLike}
+                        className={`${liked ? 'text-blue-500!' : ''}`}
+                     >
+                        {comment?.likes}
+                     </Button>
                      <Button
                         type="text"
                         size="small"
@@ -84,11 +109,13 @@ const CommentCard = ({ comment, onReply, depth = 0 }: any) => {
                className={`mt-2 overflow-hidden transition-all duration-300 ease-in-out ${showReplies ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
                   }`}
             >
-               {nestedReplies.map((reply) => (
+               {nestedReplies.length >= 1 && nestedReplies.map((reply) => (
                   <CommentCard
                      key={reply._id}
                      comment={reply}
                      onReply={onReply}
+                     handleAddLike={handleAddLike}
+                     handleRemoveLike={handleRemoveLike}
                      depth={depth + 1}
                   />
                ))}
